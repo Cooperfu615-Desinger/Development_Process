@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>博弈遊戲開發流程 SOP</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #2563eb;
+    --accent-bg: #eff6ff;
+    --code-bg: #f3f4f6;
+    --table-head: #f9fafb;
+    --tag-open-bg: #fef3c7;
+    --tag-open-fg: #92400e;
+    --tag-done-bg: #dcfce7;
+    --tag-done-fg: #166534;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --fg: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #2d3138;
+      --accent: #60a5fa;
+      --accent-bg: #1e293b;
+      --code-bg: #1f2328;
+      --table-head: #1c1f24;
+      --tag-open-bg: #3a2f15;
+      --tag-open-fg: #fbbf24;
+      --tag-done-bg: #14311f;
+      --tag-done-fg: #4ade80;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.7;
+  }
+  .layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  nav.toc {
+    flex: 0 0 240px;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 32px 16px;
+    border-right: 1px solid var(--border);
+  }
+  nav.toc h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  nav.toc ul { list-style: none; margin: 0; padding: 0; }
+  nav.toc li { margin-bottom: 6px; }
+  nav.toc a {
+    color: var(--fg);
+    text-decoration: none;
+    font-size: 14px;
+    display: block;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  nav.toc a:hover { background: var(--accent-bg); color: var(--accent); }
+  nav.toc .sub { padding-left: 16px; font-size: 13px; color: var(--muted); }
+  main {
+    flex: 1;
+    min-width: 0;
+    padding: 40px 48px 100px;
+  }
+  h1 {
+    font-size: 28px;
+    margin: 0 0 8px;
+  }
+  h2 {
+    font-size: 21px;
+    margin: 48px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+  h3 {
+    font-size: 17px;
+    margin: 32px 0 12px;
+    color: var(--accent);
+  }
+  .meta {
+    background: var(--accent-bg);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 20px 0 32px;
+    font-size: 14px;
+  }
+  .meta ul { margin: 0; padding-left: 20px; }
+  .meta li { margin-bottom: 4px; }
+  .status-badge {
+    display: inline-block;
+    background: var(--tag-open-bg);
+    color: var(--tag-open-fg);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 999px;
+    margin-left: 8px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 14px;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--table-head);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  pre {
+    background: var(--code-bg);
+    padding: 16px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.6;
+    white-space: pre;
+  }
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre code { background: none; padding: 0; }
+  ul, ol { padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  strong { color: var(--fg); }
+  .decided {
+    display: inline-block;
+    background: var(--tag-done-bg);
+    color: var(--tag-done-fg);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 1px 8px;
+    border-radius: 999px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .stage-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  .stage-card h3 { margin-top: 0; }
+  footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  @media (max-width: 860px) {
+    .layout { flex-direction: column; }
+    nav.toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+    main { padding: 24px 20px 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <h2>目錄</h2>
+    <ul>
+      <li><a href="#roles">1. 角色定義</a></li>
+      <li><a href="#overview">2. 流程總覽</a></li>
+      <li class="sub"><a href="#s21">2.1 單一遊戲開發依賴關係</a></li>
+      <li class="sub"><a href="#s22">2.2 Plane.io 專案結構</a></li>
+      <li class="sub"><a href="#s23">2.3 清單與 Plane 的關係</a></li>
+      <li><a href="#units">3. 各單位詳細規範</a></li>
+      <li><a href="#crossmech">4. 跨單位機制</a></li>
+      <li class="sub"><a href="#s41">4.1 機率/RTP/賠付驗證要求</a></li>
+      <li class="sub"><a href="#s42">4.2 品質把關機制</a></li>
+      <li class="sub"><a href="#s43">4.3 時程參考基準</a></li>
+      <li class="sub"><a href="#s44">4.4 決策紀錄</a></li>
+      <li><a href="#open">5. 開放問題清單</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h1>博弈遊戲開發流程 SOP</h1>
+
+    <div class="meta">
+      <ul>
+        <li>狀態:草案 v0.1,待 Cooper 確認開放問題後定版<span class="status-badge">開放問題待確認</span></li>
+        <li>適用範圍:博弈遊戲開發(含機率/賠付/RTP邏輯之遊戲類專案)</li>
+        <li>與 <code>docs/platform/SOP.md</code>(平台功能類專案)為互補文件,分屬不同軌道——平台 SOP 開頭即註明「不適用:遊戲邏輯/賠付表/機率模型類專案」,本文件補上這一塊</li>
+        <li>專案管理工具:Plane.io,採<strong>七個固定跨遊戲專案</strong>(而非平台流程的單一父工作單+子工作項),遊戲用標籤/週期區分,詳見第2節</li>
+        <li>架構決策見 <code>docs/game/decisions/0001-game-workflow-plane-structure.md</code></li>
+        <li>相關產出:簡報摘要版(Canva,<a href="https://www.canva.com/d/xVJj_sVdh1fNKgF" target="_blank" rel="noopener">檢視連結</a>)——對本 SOP 的摘要,不含 SOP 沒有的新資訊,SOP 更新時簡報需同步檢查</li>
+      </ul>
+    </div>
+
+    <h2 id="roles">1. 角色定義</h2>
+    <table>
+      <thead><tr><th>角色</th><th>職責範圍</th></tr></thead>
+      <tbody>
+        <tr><td>PM+企劃(同一人)</td><td>年度開發規劃(遊戲數量/玩法規則/題材)、與需求方確認年度計畫、規格書撰寫、跨單位協調、時程追蹤、上線協調</td></tr>
+        <tr><td>機率(外包)</td><td>依規格書產出機率/RTP/賠付邏輯;進度由 PM+企劃代為在 Plane 上更新</td></tr>
+        <tr><td>原畫</td><td>依規格書產出靜態美術素材,逐項清單追蹤(如一款遊戲約百餘項)</td></tr>
+        <tr><td>動效</td><td>依原畫產出動態效果,逐項清單追蹤,與前端有雙重驗收關卡</td></tr>
+        <tr><td>音樂音效</td><td>依動效產出音效設計,逐項清單追蹤,完成後整批交付前端套用</td></tr>
+        <tr><td>後端</td><td>依機率邏輯實作遊戲後端邏輯/API</td></tr>
+        <tr><td>前端</td><td>整合原畫/動效/音效/後端API,組裝完整遊戲;動效項目需逐項對應驗收</td></tr>
+        <tr><td>QA</td><td>完整遊戲測試驗證,含機率/RTP模擬驗證</td></tr>
+        <tr><td>各單位組長(原畫/動效/前端/後端等)</td><td><strong>品質把關</strong>,不是流程窗口——規格討論由全員一起參與,組長主要審核自己單位的產出品質,對應 Plane 狀態機制中的 In Review 關卡</td></tr>
+        <tr><td>需求方</td><td>提出需求、參與年度計畫確認</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="overview">2. 流程總覽</h2>
+
+    <h3 id="s21">2.1 單一遊戲開發依賴關係</h3>
+    <pre>PM+企劃 年度規劃(遊戲數量/玩法規則/題材) → 與需求方確認 → 年度計畫拍板
+        ↓(單一遊戲流程開始,PM+企劃開立各單位對應工作事項)
+企劃產出規格書
+        ↓(規格書同時分派給兩條並行線)
+        ├─→ 機率(外包)完成 ──────────────┐
+        └─→ 美術原畫完成 → 分成兩份:      │
+                 ├─→ 前端(套用靜態美術)   │
+                 └─→ 美術動效完成 → 同時交給: │
+                          ├─→ 音樂音效(依動效做設計) │
+                          └─→ 前端(逐項套用動效,relation 對應) │
+                                   ↓                  │
+        後端(依賴機率邏輯) ←──────────────────────────┘
+        後端完成 ────────────────────┐
+        音樂音效完成(整批交付) ───────┼──→ 前端最終整合
+                                      ┘
+        ↓
+前端自測 → QA 完整測試驗證(含機率/RTP模擬驗證) → 驗收沒問題 → 安排上線</pre>
+    <p>各單位工作時程有重疊(非嚴格序列),PM+企劃抓的總開發時程供參考基準,見第4.3節。</p>
+
+    <h3 id="s22">2.2 Plane.io 專案結構(七個固定跨遊戲專案)</h3>
+    <p>與平台流程「單一父工作單+子工作項」不同,遊戲開發是<strong>七個固定的跨遊戲 Plane 專案</strong>,同一專案裡混著不同遊戲的項目,用標籤/週期區分屬於哪一款遊戲:</p>
+    <table>
+      <thead><tr><th>Plane 專案</th><th>每款遊戲的顆粒度</th><th>完成狀態追蹤方式</th></tr></thead>
+      <tbody>
+        <tr><td>企劃+機率</td><td>通常 1-2 項(規格書、機率外包交付),不逐項拆</td><td>單一完成狀態</td></tr>
+        <tr><td>原畫</td><td>逐項素材工作事項(如百餘項/款)</td><td>單一完成勾選,前端自行從整批原畫抓進度,不逐項對應驗收</td></tr>
+        <tr><td>動效</td><td>逐項動效工作事項</td><td>雙重驗收:動效組完成 + 前端套用完成,兩者各自開一張工作事項,用 Plane 關聯(relation)連結</td></tr>
+        <tr><td>音樂音效</td><td>逐項音效工作事項</td><td>單一完成狀態,完成後整批交付前端套用,不逐項對應驗收</td></tr>
+        <tr><td>後端</td><td>依規格拆分的工作事項,依賴機率外包交付</td><td>單一完成狀態</td></tr>
+        <tr><td>前端</td><td>對應動效逐項開「前端套用」工作事項(relation 連回動效);原畫/音效/後端則是較粗顆粒度的整合工作事項</td><td>依項目類型而定</td></tr>
+        <tr><td>QA</td><td>測試驗證工作事項,含機率/RTP模擬驗證</td><td>單一完成狀態</td></tr>
+      </tbody>
+    </table>
+    <p>「上線」不獨立成專案,歸在<strong>企劃+機率專案</strong>的最後一項——PM+企劃本來就是負責上線協調、對需求方回報的角色(此為技術性選擇,如與實際安排不同請告知調整)。</p>
+
+    <h3 id="s23">2.3 清單(xlsx)與 Plane 的關係(現況說明,非新規則)</h3>
+    <p>原畫/動效/音效目前是<strong>人工雙軌</strong>:各單位在 xlsx 清單(如 <code>巨亨麻將_原畫清單.xlsx</code>)勾選完成度做內部工作追蹤,同時也要手動同步更新 Plane 上對應工作事項的狀態。這是目前實際做法,本SOP先如實記錄,不預設要改變;若之後想合併成單一來源,可另外討論。</p>
+
+    <h2 id="units">3. 各單位詳細規範</h2>
+
+    <div class="stage-card">
+      <h3>企劃+機率</h3>
+      <ul>
+        <li>負責人:PM+企劃(規格書)、機率外包(邏輯設計,PM+企劃代為更新 Plane 進度)</li>
+        <li>產出:規格書(功能流程、欄位定義、驗收標準)、機率/RTP/賠付邏輯交付</li>
+        <li>離開條件:規格書拍板,機率邏輯交付給後端</li>
+        <li>常見風險:PM+企劃身兼兩職,事情較多——這是目前已知現況而非要解決的問題,設計上盡量讓其他單位能各自獨立推進,減少每件事都要等 PM+企劃居中的情況</li>
+      </ul>
+    </div>
+
+    <div class="stage-card">
+      <h3>原畫</h3>
+      <ul>
+        <li>負責人:原畫、組長(品質把關)</li>
+        <li>輸入:規格書</li>
+        <li>產出:逐項靜態美術素材,依清單勾選完成</li>
+        <li>離開條件:清單全數完成,前端可自行抓取進度開始套用</li>
+        <li>常見風險:無(原畫→前端不做逐項雙重驗收,是既有且運作順暢的做法)</li>
+      </ul>
+    </div>
+
+    <div class="stage-card">
+      <h3>動效</h3>
+      <ul>
+        <li>負責人:動效、組長(品質把關)</li>
+        <li>輸入:對應原畫完成的素材</li>
+        <li>產出:逐項動態效果,每項對應一張前端工作事項(relation 連結)</li>
+        <li>離開條件:動效組完成該項 → 前端套用完成該項,兩個勾選都完成才算這一項結束</li>
+        <li>常見風險:動效與前端的雙重驗收若其中一邊漏更新 relation 對應的工作事項狀態,會造成進度誤判——建議定期(如每週)雙方對一次清單與 Plane 是否一致</li>
+      </ul>
+    </div>
+
+    <div class="stage-card">
+      <h3>音樂音效</h3>
+      <ul>
+        <li>負責人:音樂音效、組長(品質把關)</li>
+        <li>輸入:對應動效完成的項目</li>
+        <li>產出:逐項音效設計,依清單勾選完成</li>
+        <li>離開條件:清單全數完成,整批交付前端套用</li>
+        <li>常見風險:無(整批交付,不逐項對應驗收,是既有做法)</li>
+      </ul>
+    </div>
+
+    <div class="stage-card">
+      <h3>後端</h3>
+      <ul>
+        <li>負責人:後端、組長(品質把關)</li>
+        <li>輸入:機率外包交付的邏輯</li>
+        <li>產出:遊戲後端邏輯/API 實作</li>
+        <li>離開條件:自測通過,交付前端串接</li>
+        <li>常見風險:機率邏輯理解落差 → 實作中若發現機率邏輯或規格模糊,回頭找企劃或機率外包確認,不自己猜</li>
+      </ul>
+    </div>
+
+    <div class="stage-card">
+      <h3>前端</h3>
+      <ul>
+        <li>負責人:前端、組長(品質把關)</li>
+        <li>輸入:原畫(整批)、動效(逐項 relation)、音樂音效(整批)、後端 API</li>
+        <li>產出:完整遊戲組裝,含與動效逐項對應的套用工作事項</li>
+        <li>離開條件:自測通過,交付 QA</li>
+        <li>常見風險:因為是所有素材的匯流點,任一上游(原畫/動效/音效/後端)delay 都會直接壓縮前端時間——PM+企劃需同時盯多條並行線,提早發現延遲(見4.3節)</li>
+      </ul>
+    </div>
+
+    <div class="stage-card">
+      <h3>QA</h3>
+      <ul>
+        <li>負責人:QA</li>
+        <li>輸入:前端完整整合版本</li>
+        <li>產出:測試報告,包含:
+          <ul>
+            <li>功能測試結果</li>
+            <li><strong>機率/RTP/賠付邏輯模擬驗證</strong>:後端或QA需做模擬驗證(如跑大量模擬確認 RTP 符合預期),不可只憑外包商保證,對應 CLAUDE.md 不可妥協項目2(機率、賠付、金額類結論須附驗證方式)</li>
+          </ul>
+        </li>
+        <li>離開條件:Bug清單清空或已知並經 PM+企劃確認可上線的範圍</li>
+        <li>常見風險:機率驗證若沒做或做得不夠(例如模擬把數不足),應在測試報告裡明確記錄驗證方式與樣本量,不能只寫「已驗證」</li>
+      </ul>
+    </div>
+
+    <div class="stage-card">
+      <h3>上線</h3>
+      <ul>
+        <li>負責人:PM+企劃(歸在企劃+機率專案)</li>
+        <li>產出:上線紀錄、交付文件包</li>
+        <li>離開條件:上線確認且需求方收到交付文件包</li>
+      </ul>
+    </div>
+
+    <h2 id="crossmech">4. 跨單位機制</h2>
+
+    <h3 id="s41">4.1 機率/RTP/賠付驗證要求(不可妥協)</h3>
+    <p>凡機率、RTP、賠付邏輯相關的結論(規格可行、測試通過、可以上線等),必須附驗證方式(模擬、統計檢定、或實跑紀錄),純人工推導或單純信任外包商交付不算驗證。目前確認的做法是<strong>後端或 QA 會做模擬驗證</strong>(如跑大量模擬確認 RTP 符合預期),此規則對應 CLAUDE.md 全域規則,寫入本SOP以確保遊戲類專案明確適用。</p>
+
+    <h3 id="s42">4.2 品質把關機制(組長)</h3>
+    <p>各單位組長不是流程窗口(不像平台流程的組長需代表單位參加需求會議),而是<strong>品質把關</strong>——規格討論由全員一起參與,組長在自己單位的產出要轉為 Done 之前,負責審核品質。這個把關動作對應 Plane 狀態機制裡的 In Review 階段:工作事項從 In Progress 轉 Done 前,先經過 In Review(組長確認),而不是自己做完直接標記 Done。</p>
+
+    <h3 id="s43">4.3 時程參考基準</h3>
+    <p>依 Cooper 提供的甘特圖範例(荷魯斯之眼專案),單一遊戲從原畫開始到上線,總時程約3個月,各單位時程有重疊(如後端與原畫幾乎同時起跑、動效與前端有重疊、QA 與前端收尾有重疊)。此節奏作為 PM+企劃抓時程的參考基準,不是硬性規則——落差發生時的處理精神比照平台 SOP 第4.1節:由 PM+企劃持續追蹤各專案進度,預期會 delay 時直接與需求方協調,不設固定百分比或天數門檻。</p>
+
+    <h3 id="s44">4.4 決策紀錄</h3>
+    <p>每個階段做出的重大決策與放棄的方案,寫入 <code>docs/game/decisions/</code>,格式比照平台流程:一個決策一個檔案,含背景、選項、決定、理由。目前已有:</p>
+    <ul>
+      <li><code>0001-game-workflow-plane-structure.md</code>:角色定義、Plane七專案結構、雙重驗收機制、機率驗證要求等骨架決策</li>
+    </ul>
+
+    <h2 id="open">5. 開放問題清單(not_stated,待 Cooper 確認)</h2>
+    <ol>
+      <li>規格書/清單的標準化模板尚未設計(對應平台流程的 <code>spec-template.md</code>),待後續處理</li>
+      <li>驗收簽核方式是否比照平台流程用 Plane.io 做確認,尚未討論</li>
+      <li>「上線」歸在企劃+機率專案的最後一項,是我的技術性判斷,待 Cooper 確認是否符合實際安排</li>
+      <li>動效與前端的雙重驗收若其中一邊漏同步 Plane 狀態,目前沒有固定的核對機制(SOP 建議每週對一次,但這只是建議,非拍板規則)</li>
+    </ol>
+
+    <footer>
+      本文件由 <code>docs/game/SOP.md</code> 轉換產生,為離線閱讀版。內容如有更新請以 <code>docs/game/SOP.md</code> 為準,並同步重新產生本 HTML。
+    </footer>
+  </main>
+</div>
+</body>
+</html>

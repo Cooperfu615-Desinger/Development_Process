@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>博弈平台開發流程 SOP</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #2563eb;
+    --accent-bg: #eff6ff;
+    --code-bg: #f3f4f6;
+    --table-head: #f9fafb;
+    --tag-open-bg: #fef3c7;
+    --tag-open-fg: #92400e;
+    --tag-done-bg: #dcfce7;
+    --tag-done-fg: #166534;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --fg: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #2d3138;
+      --accent: #60a5fa;
+      --accent-bg: #1e293b;
+      --code-bg: #1f2328;
+      --table-head: #1c1f24;
+      --tag-open-bg: #3a2f15;
+      --tag-open-fg: #fbbf24;
+      --tag-done-bg: #14311f;
+      --tag-done-fg: #4ade80;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.7;
+  }
+  .layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  nav.toc {
+    flex: 0 0 240px;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 32px 16px;
+    border-right: 1px solid var(--border);
+  }
+  nav.toc h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  nav.toc ul { list-style: none; margin: 0; padding: 0; }
+  nav.toc li { margin-bottom: 6px; }
+  nav.toc a {
+    color: var(--fg);
+    text-decoration: none;
+    font-size: 14px;
+    display: block;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  nav.toc a:hover { background: var(--accent-bg); color: var(--accent); }
+  nav.toc .sub { padding-left: 16px; font-size: 13px; color: var(--muted); }
+  main {
+    flex: 1;
+    min-width: 0;
+    padding: 40px 48px 100px;
+  }
+  h1 {
+    font-size: 28px;
+    margin: 0 0 8px;
+  }
+  h2 {
+    font-size: 21px;
+    margin: 48px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+  h3 {
+    font-size: 17px;
+    margin: 32px 0 12px;
+    color: var(--accent);
+  }
+  .meta {
+    background: var(--accent-bg);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 20px 0 32px;
+    font-size: 14px;
+  }
+  .meta ul { margin: 0; padding-left: 20px; }
+  .meta li { margin-bottom: 4px; }
+  .status-badge {
+    display: inline-block;
+    background: var(--tag-done-bg);
+    color: var(--tag-done-fg);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 999px;
+    margin-left: 8px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 14px;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--table-head);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  pre {
+    background: var(--code-bg);
+    padding: 16px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.6;
+    white-space: pre;
+  }
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre code { background: none; padding: 0; }
+  ul, ol { padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  strong { color: var(--fg); }
+  .decided {
+    display: inline-block;
+    background: var(--tag-done-bg);
+    color: var(--tag-done-fg);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 1px 8px;
+    border-radius: 999px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .stage-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  .stage-card h3 { margin-top: 0; }
+  footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  @media (max-width: 860px) {
+    .layout { flex-direction: column; }
+    nav.toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+    main { padding: 24px 20px 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <h2>目錄</h2>
+    <ul>
+      <li><a href="#roles">1. 角色定義</a></li>
+      <li><a href="#overview">2. 流程總覽</a></li>
+      <li class="sub"><a href="#substages">子工作項對應表</a></li>
+      <li class="sub"><a href="#planestate">Plane.io 狀態對應</a></li>
+      <li><a href="#stages">3. 各階段詳細規範</a></li>
+      <li><a href="#crossmech">4. 跨階段機制</a></li>
+      <li class="sub"><a href="#s41">4.1 時程追蹤與落差處理</a></li>
+      <li class="sub"><a href="#s42">4.2 決策紀錄</a></li>
+      <li class="sub"><a href="#s43">4.3 金流驗證要求</a></li>
+      <li class="sub"><a href="#s44">4.4 Plane.io 定位與邊界</a></li>
+      <li><a href="#open">5. 開放問題清單</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h1>博弈平台開發流程 SOP</h1>
+
+    <div class="meta">
+      <ul>
+        <li>狀態:v0.4,流程主體與報告產出包皆已定案<span class="status-badge">已定案</span></li>
+        <li>適用範圍:平台功能類專案(會員、金流、後台等非遊戲機率邏輯)</li>
+        <li>不適用:遊戲邏輯/賠付表/機率模型類專案(需另訂規格模板,涉及 RTP、賠付結構等)</li>
+        <li>專案管理工具:Plane.io,以「需求工作單(父工作項)+ 階段子工作項」的結構追蹤全流程;Plane.io 的角色邊界見第4.4節</li>
+        <li>相關產出:規格文件標準化模板 <code>docs/platform/templates/spec-template.md</code>(使用須知見同目錄 <code>spec-template-使用須知.md</code>)、離線閱讀版 <code>docs/platform/SOP.html</code>(本檔)、簡報摘要版(Canva)</li>
+        <li>變更紀錄:
+          <ul>
+            <li>v0.2 依 Cooper 提供的實際 Plane.io 用法,將流程改為工作單/子工作項結構,並調整估時機制(見 <code>docs/platform/decisions/0002-plane-io-integration.md</code>)</li>
+            <li>v0.3 確認時程落差處理方式、Plane.io 邊界、驗收簽核方式,規格文件模板順延至流程定案後處理(見 <code>docs/platform/decisions/0003-timeline-plane-scope-acceptance.md</code>)</li>
+            <li>v0.4 完成報告產出包(簡報/SOP HTML/規格文件標準化模板),並修正模板貼入 Plane.io 時頁面標題變 Untitled 的問題(見 <code>docs/platform/decisions/0004-report-package-and-spec-template-fix.md</code>)</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <h2 id="roles">1. 角色定義</h2>
+    <table>
+      <thead><tr><th>角色</th><th>職責範圍</th></tr></thead>
+      <tbody>
+        <tr><td>PM</td><td>需求接收、開立工作單、跨階段協調、時程追蹤、對需求方回報進度</td></tr>
+        <tr><td>企劃</td><td>需求轉規格、流程設計、UI/流程圖、驗收標準定義</td></tr>
+        <tr><td>開發組長</td><td>參與需求會議、掌握需求全貌、回報開發起訖時間、分派工作給開發成員</td></tr>
+        <tr><td>開發</td><td>依開發組長分派執行實作、單元測試</td></tr>
+        <tr><td>測試組長</td><td>送測後接手,掌握測試範圍、分派測試工作</td></tr>
+        <tr><td>測試</td><td>功能測試、迴歸測試、金流/金額專項驗證</td></tr>
+        <tr><td>需求方</td><td>提出需求、最終驗收</td></tr>
+      </tbody>
+    </table>
+    <p>一人兼多角色時(如企劃兼PM),仍須依角色分別在對應子工作項下填寫內容,不可省略只做口頭確認——避免同一人球員兼裁判時把「決定」跟「檢查」混成同一步。</p>
+
+    <h2 id="overview">2. 流程總覽(Plane.io 工作單結構)</h2>
+    <pre>需求工作單(父工作項,PM 開立)
+ ├─ 子工作項:規格文件      (企劃)
+ ├─ 子工作項:開發          (開發組長 → 開發)
+ ├─ 子工作項:測試          (測試組長 → 測試,送測後才建立/啟動)
+ ├─ 子工作項:驗收          (PM + 需求方)
+ └─ 子工作項:上線          (開發 + PM)</pre>
+
+    <p>流程順序:</p>
+    <pre>PM收到需求並確認 → 開立需求工作單 + 規格文件子工作項
+ → PM與企劃討論確定規格 → 需求會議(PM/企劃/開發組長)
+ → 開發組長回報起訖時間、開立開發子工作項 → 開發實作
+ → 送測,開立測試子工作項,測試組長接手 → 測試
+ → 驗收子工作項 → 上線子工作項</pre>
+
+    <p>PM 全程在需求工作單上追蹤各子工作項狀態,並對需求方回報進度。</p>
+
+    <h3 id="substages">各子工作項對應負責人與產出</h3>
+    <table>
+      <thead><tr><th>子工作項</th><th>負責人</th><th>產出物(基本追蹤資訊反映於Plane,實質內容由各組自理,見4.4)</th><th>交給下一階段的內容</th></tr></thead>
+      <tbody>
+        <tr><td>(父)需求工作單</td><td>PM</td><td>需求描述、來源、粗估時程區間(非正式承諾)</td><td>開立規格文件子工作項</td></tr>
+        <tr><td>規格文件</td><td>企劃</td><td>規格書(流程圖/欄位定義/驗收標準/決策紀錄)</td><td>需求會議討論確認後的規格版本</td></tr>
+        <tr><td>開發</td><td>開發組長→開發</td><td>起訖時間(開始/預計送測日)、工時拆解、技術方案、程式+單元測試</td><td>送測時的自測結果、已知限制</td></tr>
+        <tr><td>測試</td><td>測試組長→測試</td><td>測試報告(功能/迴歸/金流專項驗證)</td><td>Bug清單、驗證紀錄</td></tr>
+        <tr><td>驗收</td><td>PM+需求方</td><td>驗收紀錄、差異項目</td><td>簽核狀態</td></tr>
+        <tr><td>上線</td><td>開發+PM</td><td>上線紀錄、交付文件包</td><td>最終交付物清單</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="planestate">Plane.io 狀態對應(使用預設狀態:Backlog / Todo / In Progress / In Review / Done)</h3>
+    <table>
+      <thead><tr><th>工作項</th><th>Backlog</th><th>Todo</th><th>In Progress</th><th>In Review</th><th>Done</th></tr></thead>
+      <tbody>
+        <tr><td>需求工作單(父)</td><td>需求剛登記,未確認</td><td>PM已確認,已開子工作項</td><td>任一子工作項執行中</td><td>驗收中</td><td>交付完成</td></tr>
+        <tr><td>規格文件</td><td>-</td><td>待企劃撰寫</td><td>企劃撰寫中/PM討論中</td><td>需求會議討論確認中</td><td>規格拍板</td></tr>
+        <tr><td>開發</td><td>-</td><td>待開發組長排入(規格拍板後開立)</td><td>開發實作中</td><td>內部自測、準備送測</td><td>已送測</td></tr>
+        <tr><td>測試</td><td>-</td><td>待測試組長接手(送測時開立)</td><td>測試進行中</td><td>Bug修復/迴歸中</td><td>測試通過</td></tr>
+        <tr><td>驗收</td><td>-</td><td>待需求方驗收</td><td>驗收進行中</td><td>-</td><td>需求方簽核通過</td></tr>
+        <tr><td>上線</td><td>-</td><td>待排上線</td><td>上線作業中</td><td>-</td><td>上線完成,交付文件包已送出</td></tr>
+      </tbody>
+    </table>
+    <p>每個子工作項的狀態變更,即代表一次交接;負責人、起訖時間、目前狀態必須反映在 Plane 上,不可只用口頭同步取代——這是解決「交接資訊遺失」痛點的具體做法。至於規格書、測試報告等實質內容要用什麼工具管理,由各組組長自理(見4.4),不強制存放於 Plane。</p>
+
+    <h2 id="stages">3. 各階段詳細規範</h2>
+
+    <div class="stage-card">
+      <h3>需求工作單(父工作項)</h3>
+      <ul>
+        <li>開立者:PM</li>
+        <li>內容:需求來源、提出者、需求描述、粗估時程區間(給需求方方向感用,<strong>非正式承諾、不作為與開發組長實估的比對標準</strong>)</li>
+        <li>離開條件:規格文件子工作項已開立</li>
+        <li>常見風險:需求來源不明確 → 工作單內容必須留來源與提出者,不可省略</li>
+      </ul>
+    </div>
+
+    <div class="stage-card">
+      <h3>子工作項:規格文件</h3>
+      <ul>
+        <li>負責人:企劃(PM協同確認)</li>
+        <li>產出:規格書,內容包含:
+          <ul>
+            <li>功能流程圖、欄位定義/資料結構、UI 稿(如適用)</li>
+            <li>驗收標準(可測試、可勾選的條件,不是模糊描述)</li>
+            <li><strong>決策紀錄</strong>:為什麼這樣設計、放棄了哪些方案(對應 <code>docs/platform/decisions/</code>)</li>
+          </ul>
+        </li>
+        <li>交接動作:規格確定後,PM 召開需求會議(PM/企劃/開發組長參與),<strong>開發組長必須在會議中充分了解需求內容與工作細項</strong>,會議結論更新回規格文件子工作項</li>
+        <li>離開條件:需求會議後規格拍板,開發組長回報起訖時間</li>
+        <li>常見風險:規格寫完就丟給開發,決策脈絡沒留下 → 規格書內建決策紀錄段落,不是事後補;開發組長沒真的理解需求就點頭 → 會議紀錄需具體記下開發組長確認的工作細項,不是只記「已確認」</li>
+      </ul>
+    </div>
+
+    <div class="stage-card">
+      <h3>子工作項:開發</h3>
+      <ul>
+        <li>負責人:開發組長 → 分派給開發</li>
+        <li>產出:
+          <ul>
+            <li>開發組長於需求會議後回報:<strong>開始時間</strong>、<strong>預計完成送測時間</strong>(填入 Plane 開發子工作項)</li>
+            <li>工時拆解(依功能模組拆分)、技術方案摘要</li>
+            <li>程式碼、單元測試</li>
+          </ul>
+        </li>
+        <li>離開條件:自測通過,送測(狀態轉 Done,同時開立測試子工作項)</li>
+        <li>常見風險:
+          <ul>
+            <li>規格理解落差 → 實作中若發現規格模糊,回頭找企劃確認並更新規格文件子工作項(不是自己猜)</li>
+            <li>送測時間跳票沒人追蹤 → 見第4.1節時程追蹤機制</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="stage-card">
+      <h3>子工作項:測試</h3>
+      <ul>
+        <li>負責人:測試組長(送測時才接手並開立此子工作項)→ 分派給測試</li>
+        <li>輸入:程式碼、規格書驗收標準</li>
+        <li>產出:測試報告,包含:
+          <ul>
+            <li>功能測試結果(對照規格書驗收標準逐條勾選)、迴歸測試結果</li>
+            <li><strong>金流/金額相關功能的專項驗證</strong>:凡涉及金額計算、扣款、派彩、餘額異動的功能,測試報告必須附驗證方式(自動化測試案例、模擬情境、或實跑紀錄),純人工檢查不算驗證(對應 CLAUDE.md 不可妥協項目2)</li>
+          </ul>
+        </li>
+        <li>離開條件:Bug清單清空,或已知並經PM確認可上線的範圍</li>
+        <li>常見風險:金額相關bug人工看過就算測完 → 明確要求可重現的驗證方式並存檔</li>
+      </ul>
+    </div>
+
+    <div class="stage-card">
+      <h3>子工作項:驗收</h3>
+      <ul>
+        <li>負責人:PM + 需求方</li>
+        <li>產出:驗收紀錄,含差異項目與簽核狀態</li>
+        <li>離開條件:需求方簽核通過,或差異項目已列入下版規劃並取得共識</li>
+        <li>常見風險:口頭說「可以了」沒留紀錄 → 驗收紀錄必須填在 Plane 工作項裡並歸檔</li>
+      </ul>
+    </div>
+
+    <div class="stage-card">
+      <h3>子工作項:上線</h3>
+      <ul>
+        <li>負責人:開發 + PM</li>
+        <li>產出:上線紀錄(時間、範圍、負責人)、交付文件包(給需求方的最終文件,含規格書、測試報告、驗收紀錄)</li>
+        <li>離開條件:上線確認且需求方收到交付文件包</li>
+        <li>常見風險:上線後沒人整理交付文件 → 交付文件包是本階段的硬性產出,不是選配</li>
+      </ul>
+    </div>
+
+    <h2 id="crossmech">4. 跨階段機制</h2>
+
+    <h3 id="s41">4.1 時程追蹤與落差處理機制<span class="decided">已決定</span></h3>
+    <p>新流程下,正式時程承諾來自開發組長在需求會議後回報的「開始時間/預計送測時間」,PM 在需求工作單上的粗估區間僅供對需求方溝通方向,不作正式比對基準。</p>
+    <p><strong>機制</strong>:不設固定的自動化門檻(不用百分比或天數觸發規則)。PM 持續在 Plane 上追蹤各子工作項進度;一旦預期會delay,由 <strong>PM 直接與需求方協調</strong>——調整時程、範圍或優先順序,且這個協調可以在開發過程中隨時發生,不限定在某個固定檢查點。開發組長若判斷會delay,應主動反映給 PM,由 PM 決定是否要對需求方溝通。</p>
+    <p>不設死規則的原因:落差的處理仰賴 PM 對需求方關係與情境的判斷,不適合用固定百分比/天數取代;Plane.io 在本流程中只負責讓 PM 看得到進度(見4.4),協調動作本身在 Plane 之外進行。</p>
+
+    <h3 id="s42">4.2 決策紀錄</h3>
+    <p>每個階段做出的重大決策與放棄的方案,寫入 <code>docs/platform/decisions/</code>,格式:一個決策一個檔案,含背景、選項、決定、理由。目前已有:</p>
+    <ul>
+      <li><code>0001-workflow-stage-structure.md</code>:八階段骨架決策</li>
+      <li><code>0002-plane-io-integration.md</code>:整合 Plane.io 工作單結構、調整估時機制</li>
+      <li><code>0003-timeline-plane-scope-acceptance.md</code>:時程落差處理方式、Plane.io 邊界、驗收簽核方式</li>
+      <li><code>0004-report-package-and-spec-template-fix.md</code>:報告產出包(簡報/SOP HTML/規格模板)與模板匯入 Plane.io 的修正</li>
+    </ul>
+
+    <h3 id="s43">4.3 金流/金額相關功能的驗證要求</h3>
+    <p>凡功能涉及金額計算、派彩、扣款、餘額異動,不論在哪個子工作項,只要產出「結論」(規格可行、測試通過、可以上線等),都必須附驗證方式(模擬、自動化測試、或實跑紀錄),純人工推導或人工檢查不算驗證。此規則對應 CLAUDE.md 全域規則,寫入本SOP以確保平台功能類專案(尤其金流模組)明確適用。</p>
+
+    <h3 id="s44">4.4 Plane.io 的定位與邊界<span class="decided">已決定</span></h3>
+    <p>Plane.io 沒有可標記「金流相關」「粗估區間」等資訊的自訂欄位功能,且 Cooper 確認 Plane.io 的定位就是:</p>
+    <ul>
+      <li>確認「有哪些工作項」(需求工作單 + 各階段子工作項)</li>
+      <li>追蹤「目前進度到哪裡」(工作項狀態:Backlog/Todo/In Progress/In Review/Done)</li>
+    </ul>
+    <p>除此之外的內容管理(規格書、測試報告、決策紀錄等實質產出怎麼寫、存在哪裡),由<strong>各組組長自行處理</strong>,SOP 不強制規定工具或存放位置。SOP 對 Plane 的唯一硬性要求是:每個工作項的<strong>負責人、起訖時間、狀態</strong>要反映在上面,確保 PM 能看到全貌並據此做4.1節的協調判斷。</p>
+    <p><strong>驗收簽核</strong>:透過 Plane.io 做確認(子工作項狀態轉為 Done 即代表需求方簽核通過),不另外要求書面簽名或其他系統。</p>
+
+    <h2 id="open">5. 開放問題清單(not_stated,待 Cooper 確認)</h2>
+    <p>目前無開放問題。規格文件標準化模板已完成(<code>docs/platform/templates/spec-template.md</code>),流程主體與報告產出包皆已定案,後續視實際導入運作狀況滾動調整。</p>
+
+    <footer>
+      本文件由 <code>docs/platform/SOP.md</code> 轉換產生,為離線閱讀版。內容如有更新請以 <code>docs/platform/SOP.md</code> 為準,並同步重新產生本 HTML。
+    </footer>
+  </main>
+</div>
+</body>
+</html>

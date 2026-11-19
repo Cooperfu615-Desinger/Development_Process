@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>平台規格書撰寫規範</title>
+  <style>
+    :root { --ink:#172033; --muted:#64748b; --line:#dbe3ef; --blue:#2563eb; --blue-soft:#eff6ff; --surface:#fff; --page:#f6f8fc; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter, "PingFang TC", "Microsoft JhengHei", Arial, sans-serif; color:var(--ink); background:var(--page); line-height:1.65; }
+    main { max-width:900px; margin:0 auto; padding:42px 24px 90px; }
+    .back { display:inline-block; color:var(--blue); text-decoration:none; font-size:14px; font-weight:700; margin-bottom:18px; }
+    .back:hover { text-decoration:underline; }
+    .eyebrow { color:var(--blue); font-size:13px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    h1 { font-size:30px; margin:4px 0 8px; line-height:1.25; }
+    h2 { font-size:19px; margin:38px 0 12px; padding-bottom:6px; border-bottom:2px solid var(--line); }
+    p { margin:8px 0 14px; }
+    .lead { color:var(--muted); max-width:780px; }
+    table { width:100%; max-width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--line); border-radius:10px; overflow:hidden; margin:14px 0 22px; font-size:14px; }
+    th,td { border-bottom:1px solid var(--line); padding:11px 12px; vertical-align:top; text-align:left; overflow-wrap:anywhere; }
+    tr:last-child td { border-bottom:0; }
+    th { background:#f8fafc; font-weight:800; }
+    ul,ol { padding-left:22px; }
+    li { margin:5px 0; }
+    code { background:#eef2f7; padding:2px 5px; border-radius:4px; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.9em; }
+    pre { white-space:pre-wrap; background:#0f172a; color:#e2e8f0; border-radius:10px; padding:16px; overflow:auto; font-size:13px; }
+    pre code { background:transparent; padding:0; }
+    .callout { background:var(--blue-soft); border-left:4px solid var(--blue); border-radius:8px; padding:14px 16px; margin:18px 0 28px; }
+    .warning { border:1px solid #fed7aa; background:#fff7ed; border-radius:10px; padding:14px 16px; margin:18px 0; }
+    .warning strong { color:#9a3412; }
+    .check li { list-style:"☐  "; padding-left:3px; }
+    .footer { color:var(--muted); font-size:13px; padding-top:24px; margin-top:40px; border-top:1px solid var(--line); }
+    @media (max-width:820px) { main{padding:24px 16px 56px;} h1{font-size:25px;} }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="back" href="../../core/SOP.html">← 回核心開發流程規範</a>
+    <div class="eyebrow">平台 · 範例文件</div>
+    <h1>平台規格書撰寫規範</h1>
+    
+        <p class="lead">定義平台規格書的章節結構、每章該寫什麼、不該寫什麼，讓 UIUX 前端、後端、營運三方用同一份結構閱讀與撰寫。寫規格書前先讀這份，寫完後對照「交付檢查表」確認。</p>
+
+        <table><colgroup><col style="width:20%"><col style="width:80%"></colgroup><thead><tr><th>文件項目</th><th>內容</th></tr></thead><tbody>
+        <tr><td>文件性質</td><td>撰寫規範。定義平台規格書的章節結構、內容範圍與寫作規則。</td></tr>
+        <tr><td>與現有文件關係</td><td>獨立文件。不取代任何現有規格，不納入規格網站。</td></tr>
+        <tr><td>本版目的</td><td>統一規格書格式，讓 UIUX 前端、後端、營運三方使用同一份結構閱讀與撰寫。</td></tr>
+        <tr><td>適用範圍</td><td>後台功能頁、報表頁的規格書。</td></tr>
+        <tr><td>參考範例</td><td><code>GAME_LIST_PRD_SAMPLE.md</code>（遊戲列表功能規格書，待補）</td></tr>
+        </tbody></table>
+
+        <h2>一、這份規範是什麼</h2>
+        <p>定義一份規格書該有哪些章節、每章該寫什麼、不該寫什麼。</p>
+        <p>寫規格書前先讀這份。寫完後對照本文件的「交付檢查表」確認。</p>
+
+        <h2>二、讀者與視角</h2>
+        <p>規格書的讀者是三方。撰寫時必須讓三方各自找得到自己要的內容。</p>
+        <table><colgroup><col style="width:10%"><col style="width:48%"><col style="width:42%"></colgroup><thead><tr><th>讀者</th><th>想知道</th><th>主要讀哪幾章</th></tr></thead><tbody>
+        <tr><td>營運</td><td>這個功能能做什麼、不能做什麼</td><td>1、2、3、4、6、8、10</td></tr>
+        <tr><td>UIUX 前端</td><td>畫面有什麼、怎麼互動、各種狀態怎麼呈現</td><td>4、5、6、7、8、9、11</td></tr>
+        <tr><td>後端</td><td>要提供什麼資料、有什麼規則</td><td>3、5、6、11、14</td></tr>
+        <tr><td>QA</td><td>怎麼驗這個功能對不對</td><td>9、12、13</td></tr>
+        </tbody></table>
+
+        <h2>三、文件結構總表</h2>
+        <table><colgroup><col style="width:5%"><col style="width:20%"><col style="width:18%"><col style="width:57%"></colgroup><thead><tr><th>#</th><th>章節</th><th>必要性</th><th>一句話說明</th></tr></thead><tbody>
+        <tr><td>—</td><td>文件控制表</td><td>必要</td><td>這份文件是什麼、範圍到哪裡</td></tr>
+        <tr><td>—</td><td>目錄</td><td>必要</td><td>章節清單與主要讀者</td></tr>
+        <tr><td>1</td><td>這頁是什麼</td><td>必要</td><td>功能用途與使用者要做的事</td></tr>
+        <tr><td>2</td><td>這頁不做什麼</td><td>必要</td><td>責任邊界</td></tr>
+        <tr><td>3</td><td>名詞說明</td><td>必要</td><td>三方共用詞彙</td></tr>
+        <tr><td>4</td><td>畫面內容</td><td>頁面型必要</td><td>有哪些區塊、每區塊有什麼</td></tr>
+        <tr><td>5</td><td>欄位說明</td><td>有列表或表單時必要</td><td>每個欄位的內容與規則</td></tr>
+        <tr><td>6</td><td>狀態說明</td><td>有狀態時必要</td><td>每組狀態的值、顯示與規則</td></tr>
+        <tr><td>7</td><td>查詢、排序與分頁</td><td>有查詢時必要</td><td>查詢條件與結果控制</td></tr>
+        <tr><td>8</td><td>操作與跳轉</td><td>必要</td><td>可以點什麼、會去哪裡</td></tr>
+        <tr><td>9</td><td>頁面狀態</td><td>必要</td><td>載入、空、錯誤、無權限</td></tr>
+        <tr><td>10</td><td>User Story — 使用者</td><td>必要</td><td>從使用者角度描述</td></tr>
+        <tr><td>11</td><td>User Story — 開發人員</td><td>必要</td><td>從實作角度描述</td></tr>
+        <tr><td>12</td><td>User Story — QA 驗證者</td><td>必要</td><td>從驗證角度描述</td></tr>
+        <tr><td>13</td><td>驗收標準</td><td>必要</td><td>可驗收的條件清單</td></tr>
+        <tr><td>14</td><td>這頁需要的資料</td><td>要接後端時必要</td><td>給後端的資料需求</td></tr>
+        <tr><td>15</td><td>待確認事項</td><td>必要</td><td>尚未決定的問題</td></tr>
+        <tr><td>16</td><td>版本沿革</td><td>必要</td><td>版本與變更紀錄</td></tr>
+        <tr><td>17</td><td>交付檢查表</td><td>必要</td><td>交付前逐項確認</td></tr>
+        </tbody></table>
+        <p>章節編號固定。不適用的章節保留編號並標示「本頁不適用」，不可跳號。</p>
+
+        <h2>四、各章說明</h2>
+
+        <p><strong>文件控制表</strong></p>
+        <p>放在標題下方。固定六列。</p>
+        <table><colgroup><col style="width:20%"><col style="width:80%"></colgroup><thead><tr><th>欄位</th><th>寫什麼</th></tr></thead><tbody>
+        <tr><td>文件性質</td><td>這是規格書、範例，還是規範</td></tr>
+        <tr><td>與現有文件關係</td><td>取代什麼、不取代什麼</td></tr>
+        <tr><td>本版目的</td><td>這一版要解決什麼問題</td></tr>
+        <tr><td>適用範圍</td><td>涵蓋哪些頁面或功能</td></tr>
+        <tr><td>不在本版範圍</td><td>明確排除的項目</td></tr>
+        <tr><td>上游依據</td><td>這份文件依據哪份上游文件</td></tr>
+        </tbody></table>
+        <div class="warning"><strong>「不在本版範圍」必填。</strong>這是防止範圍蔓延最有效的一欄。</div>
+
+        <p><strong>目錄</strong></p>
+        <p>三欄：章節、內容、主要讀者。標出主要讀者，讓三方知道自己該讀哪幾章。</p>
+
+        <p><strong>1. 這頁是什麼</strong></p>
+        <p>寫什麼：</p>
+        <ul>
+        <li>這個功能的用途</li>
+        <li>使用者在這裡做哪幾件事（條列）</li>
+        <li>這頁是唯讀還是可操作</li>
+        </ul>
+        <p>注意：寫「使用者做什麼」，不寫「系統做什麼」。</p>
+
+        <p><strong>2. 這頁不做什麼</strong></p>
+        <p>兩欄表：不做的事、由誰負責。只寫<strong>會被誤以為在這裡做</strong>的事。不窮舉所有不相關的功能。</p>
+
+        <p><strong>3. 名詞說明</strong></p>
+        <p>寫什麼：</p>
+        <ul>
+        <li>三方會用到但認知可能不同的詞</li>
+        <li>系統內部物件的定義</li>
+        <li>容易混淆的欄位</li>
+        </ul>
+        <div class="warning"><strong>兩個名字相近、層級不同的欄位，必須在這章切開，並舉一個實例。</strong></div>
+        <p>例：「全域可用性」與「發布狀態」都叫狀態，但層級不同、來源不同、不可互相推導。</p>
+
+        <p><strong>4. 畫面內容</strong></p>
+        <p>寫什麼：</p>
+        <ul>
+        <li>由上而下的區塊清單</li>
+        <li>每個區塊有什麼內容</li>
+        <li>表頭結構（如有多層表頭）</li>
+        <li>摘要數字的計算方式</li>
+        </ul>
+        <p>注意：只寫「有什麼」，不寫「長什麼樣」。顏色、間距、字級不寫在規格書。</p>
+
+        <p><strong>5. 欄位說明</strong></p>
+        <p>表格逐欄列出：欄位名稱、內容、<strong>無資料時顯示什麼</strong>。</p>
+        <div class="warning"><strong>「無資料時顯示什麼」必填。</strong>這是最常漏掉、也最常出問題的一格。</div>
+        <p>欄位下方補充規則，例如：哪些值不可顯示為 0、哪些 ID 只在詳情顯示。</p>
+
+        <p><strong>6. 狀態說明</strong></p>
+        <p>每一組狀態各一張表：值、顯示文字、意思。</p>
+        <p>規則：</p>
+        <ul>
+        <li>同時列出<strong>代碼</strong>與<strong>顯示文字</strong>。代碼給後端看，顯示文字給營運看。</li>
+        <li>不同層級的狀態必須分開列表，不可合併成一張。</li>
+        <li>表格下方寫狀態之間的規則，例如什麼情況會自動改變、什麼情況不會。</li>
+        </ul>
+
+        <p><strong>7. 查詢、排序與分頁</strong></p>
+        <p>寫什麼：</p>
+        <ul>
+        <li>每個篩選條件的欄位名稱、型態、說明</li>
+        <li>查詢的觸發時機（即時或按鈕）</li>
+        <li>預設排序、可排序欄位</li>
+        <li>每頁筆數</li>
+        </ul>
+        <p>規劃中但尚未實作的功能要標明，不與現況混寫。</p>
+
+        <p><strong>8. 操作與跳轉</strong></p>
+        <p>表格列出：點擊位置、前往哪裡、<strong>帶入什麼參數</strong>。</p>
+        <div class="warning"><strong>參數必填。</strong>沒有寫參數的跳轉，實作與驗收都會出錯。</div>
+
+        <p><strong>9. 頁面狀態</strong></p>
+        <p>至少涵蓋五種：</p>
+        <table><colgroup><col style="width:16%"><col style="width:84%"></colgroup><thead><tr><th>狀態</th><th>說明</th></tr></thead><tbody>
+        <tr><td>載入中</td><td>資料尚未回來</td></tr>
+        <tr><td>查無資料</td><td>查詢成功但沒有結果</td></tr>
+        <tr><td>載入失敗</td><td>查詢失敗</td></tr>
+        <tr><td>局部失敗</td><td>部分資料取不到，其他正常</td></tr>
+        <tr><td>無權限</td><td>使用者不能看這個頁面</td></tr>
+        </tbody></table>
+        <div class="warning"><strong>「查無資料」與「載入失敗」必須分開。</strong>兩者的使用者處置方式完全不同。</div>
+
+        <p><strong>10～12. User Story</strong></p>
+        <p>三章分別從三個角度描述同一個功能。格式與規則見「五、User Story 撰寫規則」。</p>
+
+        <p><strong>13. 驗收標準</strong></p>
+        <p>表格四欄：ID、主題、驗收敘述。敘述使用 Given / When / Then 一行寫完。</p>
+        <p>每條驗收都要能被實際執行。寫不出具體操作步驟的條目不放進來。</p>
+
+        <p><strong>14. 這頁需要的資料</strong></p>
+        <p>給後端的資料需求。分成幾個能力區塊，每塊寫：輸入、輸出、規則。</p>
+        <div class="warning"><strong>寫「需要什麼資料」，不寫 API 路徑、欄位名稱與 schema。</strong>正式介面在後端規格定義，不在功能規格書鎖死。</div>
+
+        <p><strong>15. 待確認事項</strong></p>
+        <p>分兩類：</p>
+        <table><colgroup><col style="width:20%"><col style="width:80%"></colgroup><thead><tr><th>類別</th><th>說明</th></tr></thead><tbody>
+        <tr><td>待產品決策</td><td>內部可以決定，等排時間</td></tr>
+        <tr><td>待外部輸入</td><td>要等其他團隊或外部系統</td></tr>
+        </tbody></table>
+        <p>每項寫：編號、問題、影響範圍（或等待對象）。處理原則見「八、待確認事項的處理原則」。</p>
+
+        <p><strong>16. 版本沿革</strong></p>
+        <p>表格三欄：版本、日期、內容。後續變更以最新版為基準建立，保留全部沿革，不覆蓋舊紀錄。</p>
+
+        <p><strong>17. 交付檢查表</strong></p>
+        <p>表格三欄：檢查面、完成條件、確認欄。檢查面對應本文件的重點章節。完成條件必須是可以回答「是」或「否」的敘述。</p>
+
+        <h2>五、User Story 撰寫規則</h2>
+        <p><strong>三個視角</strong></p>
+        <table><colgroup><col style="width:8%"><col style="width:14%"><col style="width:40%"><col style="width:38%"></colgroup><thead><tr><th>章節</th><th>視角</th><th>問的問題</th><th>主要讀者</th></tr></thead><tbody>
+        <tr><td>10</td><td>使用者</td><td>我要做什麼</td><td>營運</td></tr>
+        <tr><td>11</td><td>開發人員</td><td>我要做對什麼</td><td>UIUX 前端、後端</td></tr>
+        <tr><td>12</td><td>QA 驗證者</td><td>我要驗什麼</td><td>QA</td></tr>
+        </tbody></table>
+        <p>同一條規則可以在三章各出現一次。角度不同，不算重複。</p>
+
+        <p><strong>格式</strong></p>
+        <p>每一則使用一張表格：</p>
+        <pre>| **US-U01 標題** |
+    | :--- |
+    | 身為（角色），我要（目的）。 |
+    | **GIVEN** 前提條件。 |
+    | **WHEN** 觸發動作。 |
+    | **THEN** 預期結果。 |</pre>
+        <p>沒有前提條件時可省略 GIVEN，其餘不可省略。</p>
+
+        <p><strong>規則</strong></p>
+        <ul>
+        <li>一則只講一件事。講兩件事就拆成兩則。</li>
+        <li><strong>GIVEN 要有具體數字或具體狀態。</strong>不寫「某些情況下」。</li>
+        <li><strong>THEN 要可觀察。</strong>不寫「正確顯示」「正常運作」，要寫看到什麼。</li>
+        <li>每章建議 8～12 則。少於 6 則通常代表描述不完整。</li>
+        </ul>
+
+        <h2>六、編號規則</h2>
+        <table><colgroup><col style="width:16%"><col style="width:40%"><col style="width:44%"></colgroup><thead><tr><th>編號</th><th>用途</th><th>範例</th></tr></thead><tbody>
+        <tr><td><code>US-U##</code></td><td>使用者 User Story</td><td>US-U01</td></tr>
+        <tr><td><code>US-D##</code></td><td>開發人員 User Story</td><td>US-D01</td></tr>
+        <tr><td><code>US-Q##</code></td><td>QA User Story</td><td>US-Q01</td></tr>
+        <tr><td><code>AC-##</code></td><td>驗收標準</td><td>AC-01</td></tr>
+        <tr><td><code>Q-##</code></td><td>待確認事項</td><td>Q-01</td></tr>
+        </tbody></table>
+        <p>規則：</p>
+        <ul>
+        <li>編號一旦發布就不重用、不重排。</li>
+        <li>移除的項目保留編號，內容改為「已移除，見 vX.X」。</li>
+        <li>新增項目接續最大號，不插號。</li>
+        </ul>
+
+        <h2>七、寫作規則</h2>
+        <ol>
+        <li>一句話講一件事。不用逗號串三個子句。</li>
+        <li>能用表格就不用段落。</li>
+        <li>不寫「值得注意的是」「需要特別說明」「基本上」「原則上」。</li>
+        <li>不寫形容詞。「完整的查詢功能」改成直接列出有哪些查詢條件。</li>
+        <li>規則用「會／不會／必須／不可」，不用「建議」「盡量」「應該」。</li>
+        </ol>
+
+        <h2>八、待確認事項的處理原則</h2>
+        <ol>
+        <li><strong>查得到的先查，查不到才標。</strong>現有文件、原型或程式裡找得到答案的，不列入待確認。</li>
+        <li><strong>不填推測答案。</strong>沒有決策的地方留白並標明，不寫看起來合理的內容。</li>
+        <li><strong>分清楚待決策與待外部輸入。</strong>前者可以排時間解決，後者只能等。</li>
+        <li><strong>決議後更新，不刪除。</strong>更新狀態與決議內容，保留原始問題與編號。</li>
+        </ol>
+        <div class="callout">一份好的規格書，待確認事項是<strong>找出來的真問題</strong>，不是填不滿的空格。找出十個真問題比填滿十個格子有價值。</div>
+
+        <h2>九、版本管理</h2>
+        <ul>
+        <li>原始檔為 Markdown，存放於版本控制。</li>
+        <li>需要 Word 版本時由 Markdown 轉出，不反向編輯 Word。</li>
+        </ul>
+        <p>轉檔指令：</p>
+        <pre>pandoc -f markdown -t docx SPEC.md -o SPEC.docx</pre>
+        <ul>
+        <li>每次改版更新「版本沿革」，並同步檢查 User Story、驗收標準與待確認事項是否需要一併調整。</li>
+        </ul>
+
+        <h2>附錄：空白骨架</h2>
+        <p>複製以下內容開始撰寫。</p>
+        <pre># （功能名稱） 功能規格書
+
+    **營運後台 · PRODUCT REQUIREMENTS DOCUMENT**
+
+    （模組）｜（功能名稱）｜v1.0｜（日期）
+
+    | 文件項目 | 內容 |
+    |---|---|
+    | 文件性質 | |
+    | 與現有文件關係 | |
+    | 本版目的 | |
+    | 適用範圍 | |
+    | 不在本版範圍 | |
+    | 上游依據 | |
+
+    ## 目錄
+
+    | 章節 | 內容 | 主要讀者 |
+    |---|---|---|
+    | 01 | 這頁是什麼 | 全部 |
+    | ... | | |
+
+    # 1. 這頁是什麼
+
+    # 2. 這頁不做什麼
+
+    | 不做的事 | 由誰負責 |
+    |---|---|
+
+    # 3. 名詞說明
+
+    | 名詞 | 說明 |
+    |---|---|
+
+    # 4. 畫面內容
+
+    | 區塊 | 內容 |
+    |---|---|
+
+    # 5. 欄位說明
+
+    | # | 欄位 | 內容 | 無資料時顯示 |
+    |---|---|---|---|
+
+    # 6. 狀態說明
+
+    | 值 | 顯示 | 意思 |
+    |---|---|---|
+
+    # 7. 查詢、排序與分頁
+
+    | 欄位 | 型態 | 說明 |
+    |---|---|---|
+
+    # 8. 操作與跳轉
+
+    | 點擊位置 | 前往 | 帶入參數 |
+    |---|---|---|
+
+    # 9. 頁面狀態
+
+    | 狀態 | 顯示方式 |
+    |---|---|
+
+    # 10. User Story — 使用者
+
+    | **US-U01 標題** |
+    | :--- |
+    | 身為（角色），我要（目的）。 |
+    | **GIVEN** |
+    | **WHEN** |
+    | **THEN** |
+
+    # 11. User Story — 開發人員
+
+    | **US-D01 標題** |
+    | :--- |
+    | 身為開發人員，我要（目的）。 |
+    | **GIVEN** |
+    | **WHEN** |
+    | **THEN** |
+
+    # 12. User Story — QA 驗證者
+
+    | **US-Q01 標題** |
+    | :--- |
+    | 身為 QA，我要（目的）。 |
+    | **GIVEN** |
+    | **WHEN** |
+    | **THEN** |
+
+    # 13. 驗收標準
+
+    | ID | 主題 | 驗收敘述 |
+    |---|---|---|
+    | AC-01 | | Given ；When ；Then 。 |
+
+    # 14. 這頁需要的資料
+
+    | 需求 | 內容 |
+    |---|---|
+
+    # 15. 待確認事項
+
+    ## 15.1 待產品決策
+
+    | # | 問題 | 影響 |
+    |---|---|---|
+
+    ## 15.2 待外部輸入
+
+    | # | 問題 | 等待對象 |
+    |---|---|---|
+
+    # 16. 版本沿革
+
+    | 版本 | 日期 | 內容 |
+    |---|---|---|
+
+    # 17. 交付檢查表
+
+    | 檢查面 | 完成條件 | 確認 |
+    |---|---|---|</pre>
+      
+    <div class="footer">本文件由 docs/platform/examples/spec-standard.md 轉換產生。內容如有更新請以該檔案為準。</div>
+  </main>
+</body>
+</html>

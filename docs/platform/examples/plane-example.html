@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>平台 Plane 使用範例</title>
+  <style>
+    :root { --ink:#172033; --muted:#64748b; --line:#dbe3ef; --blue:#2563eb; --blue-soft:#eff6ff; --surface:#fff; --page:#f6f8fc; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter, "PingFang TC", "Microsoft JhengHei", Arial, sans-serif; color:var(--ink); background:var(--page); line-height:1.65; }
+    main { max-width:900px; margin:0 auto; padding:42px 24px 90px; }
+    .back { display:inline-block; color:var(--blue); text-decoration:none; font-size:14px; font-weight:700; margin-bottom:18px; }
+    .back:hover { text-decoration:underline; }
+    .eyebrow { color:var(--blue); font-size:13px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    h1 { font-size:30px; margin:4px 0 8px; line-height:1.25; }
+    h2 { font-size:19px; margin:38px 0 12px; padding-bottom:6px; border-bottom:2px solid var(--line); }
+    h3 { font-size:16px; margin:22px 0 8px; color:#1d4ed8; }
+    p { margin:8px 0 14px; }
+    .lead { color:var(--muted); max-width:720px; }
+    table { width:100%; max-width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--line); border-radius:10px; overflow:hidden; margin:14px 0 22px; font-size:14px; }
+    th,td { border-bottom:1px solid var(--line); padding:11px 12px; vertical-align:top; text-align:left; overflow-wrap:anywhere; }
+    tr:last-child td { border-bottom:0; }
+    th { background:#f8fafc; font-weight:800; }
+    code { background:#eef2f7; padding:2px 5px; border-radius:4px; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.9em; }
+    pre { white-space:pre-wrap; background:#0f172a; color:#e2e8f0; border-radius:10px; padding:16px; overflow:auto; font-size:13px; }
+    .footer { color:var(--muted); font-size:13px; padding-top:24px; margin-top:40px; border-top:1px solid var(--line); }
+    @media (max-width:820px) { main{padding:24px 16px 56px;} h1{font-size:25px;} }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="back" href="../../core/SOP.html">← 回核心開發流程規範</a>
+    <div class="eyebrow">平台 · 範例文件</div>
+    <h1>平台 Plane 使用範例</h1>
+    <p class="lead">示範平台功能類專案的 Plane.io 結構與實際填寫方式,對應核心規範「Plane 開立規則」的通用欄位/卡片規則。平台的拓撲是單一需求工作單(父工作項)+ 5個子工作項,跟遊戲共用單一專案、用模組區分遊戲的做法不同。</p>
+
+    <h2>結構</h2>
+    <pre>需求工作單（父工作項，PM 開立）
+ ├─ 子工作項：規格文件      （企劃）
+ ├─ 子工作項：開發          （開發組長 → 開發）
+ ├─ 子工作項：測試          （測試組長 → 測試，送測後才建立／啟動）
+ ├─ 子工作項：驗收          （PM + 需求方）
+ └─ 子工作項：上線          （開發 + PM）</pre>
+    <p>流程順序:PM 收到需求並確認 → 開立需求工作單 + 規格文件子工作項 → PM 與企劃討論確定規格 → 需求會議(PM/企劃/開發組長)→ 開發組長回報起訖時間、開立開發子工作項 → 開發實作 → 送測,開立測試子工作項,測試組長接手 → 測試 → 驗收子工作項 → 上線子工作項。</p>
+
+    <h2>模組與史詩用法</h2>
+    <p>模組對應功能版塊（長期存在），史詩對應版塊裡一個有始有終的具體功能，比照核心規範「Plane 開立規則」的 Module／Epic 使用原則。以下用內部功能規劃表的實際分類示範：</p>
+    <table><thead><tr><th>層級</th><th>用途</th><th>例子</th></tr></thead><tbody>
+      <tr><td>Module（模組）</td><td>功能版塊，長期存在、不會結束</td><td>權限與管理員、會員管理、金流、首頁與總覽...</td></tr>
+      <tr><td>Epic（史詩）</td><td>版塊裡一個有始有終的具體功能，對應內部功能規劃表的「功能群」欄位</td><td>登入與帳號安全、管理員與群組、會員列表、會員詳情...</td></tr>
+      <tr><td>需求工作單（父工作項）</td><td>史詩底下的具體功能項目，對應規劃表的「功能名稱」欄位</td><td>後台登入、管理員列表、管理員群組與權限...</td></tr>
+    </tbody></table>
+    <h3>範例：權限與管理員模組下的「管理員與群組」史詩</h3>
+    <table><tbody>
+      <tr><th>Module</th><td>權限與管理員</td></tr>
+      <tr><th>Epic</th><td>管理員與群組</td></tr>
+      <tr><th>底下工作單</th><td>[Feature][權限] 管理員列表（OPE-V1-AUTH-002）、[Feature][權限] 管理員群組與權限（OPE-V1-AUTH-003）</td></tr>
+    </tbody></table>
+    <p>兩張工作單都用 Parent 掛在「管理員與群組」史詩底下，史詩本身也掛上「權限與管理員」模組；子工作單是否需要各自重複掛模組，待實際測試確認。</p>
+
+    <h2>各子工作項對應負責人與產出</h2>
+    <table><thead><tr><th>子工作項</th><th>負責人</th><th>產出物</th><th>交給下一階段的內容</th></tr></thead><tbody>
+      <tr><td>(父)需求工作單</td><td>PM</td><td>需求描述、來源、粗估時程區間(非正式承諾)</td><td>開立規格文件子工作項</td></tr>
+      <tr><td>規格文件</td><td>企劃</td><td>規格書(流程圖/欄位定義/驗收標準/決策紀錄)</td><td>需求會議討論確認後的規格版本</td></tr>
+      <tr><td>開發</td><td>開發組長→開發</td><td>起訖時間(開始/預計送測日)、工時拆解、技術方案、程式+單元測試</td><td>送測時的自測結果、已知限制</td></tr>
+      <tr><td>測試</td><td>測試組長→測試</td><td>測試報告(功能/迴歸/金流專項驗證)</td><td>Bug清單、驗證紀錄</td></tr>
+      <tr><td>驗收</td><td>PM+需求方</td><td>驗收紀錄、差異項目</td><td>簽核狀態</td></tr>
+      <tr><td>上線</td><td>開發+PM</td><td>上線紀錄、交付文件包</td><td>最終交付物清單</td></tr>
+    </tbody></table>
+
+    <h2>Plane.io 狀態對應(Backlog / Todo / In Progress / In Review / Done)</h2>
+    <table><thead><tr><th>工作項</th><th>Backlog</th><th>Todo</th><th>In Progress</th><th>In Review</th><th>Done</th></tr></thead><tbody>
+      <tr><td>需求工作單(父)</td><td>需求剛登記,未確認</td><td>PM已確認,已開子工作項</td><td>任一子工作項執行中</td><td>驗收中</td><td>交付完成</td></tr>
+      <tr><td>規格文件</td><td>-</td><td>待企劃撰寫</td><td>企劃撰寫中/PM討論中</td><td>需求會議討論確認中</td><td>規格拍板</td></tr>
+      <tr><td>開發</td><td>-</td><td>待開發組長排入(規格拍板後開立)</td><td>開發實作中</td><td>內部自測、準備送測</td><td>已送測</td></tr>
+      <tr><td>測試</td><td>-</td><td>待測試組長接手(送測時開立)</td><td>測試進行中</td><td>Bug修復/迴歸中</td><td>測試通過</td></tr>
+      <tr><td>驗收</td><td>-</td><td>待需求方驗收</td><td>驗收進行中</td><td>-</td><td>需求方簽核通過</td></tr>
+      <tr><td>上線</td><td>-</td><td>待排上線</td><td>上線作業中</td><td>-</td><td>上線完成,交付文件包已送出</td></tr>
+    </tbody></table>
+
+    <h2>實際填寫範例:新增手機驗證功能</h2>
+    <p>以下示範一個真實需求「會員新增手機驗證」從父工作單到5個子工作項的實際填寫內容,對應核心規範「Plane 開立規則．卡片填寫規範」的欄位。</p>
+
+    <h3>父工作單</h3>
+    <table><tbody>
+      <tr><th>標題</th><td>[Feature][會員] 新增手機驗證功能</td></tr>
+      <tr><th>Assignee</th><td>PM 王小明</td></tr>
+      <tr><th>開始日/截止日</th><td>2026-08-01 ~ 2026-08-25(粗估區間,非承諾)</td></tr>
+      <tr><th>Type / Priority / Status</th><td>Feature / P2 / In Progress</td></tr>
+      <tr><th>Label</th><td>member</td></tr>
+      <tr><th>內容</th><td>需求來源:客服回報會員常收不到驗證簡訊,反覆申訴。粗估時程區間:3-4週</td></tr>
+    </tbody></table>
+
+    <h3>子工作項:規格文件</h3>
+    <table><tbody>
+      <tr><th>標題</th><td>[Feature][會員] 新增手機驗證 - 規格文件</td></tr>
+      <tr><th>Assignee</th><td>企劃 陳小華</td></tr>
+      <tr><th>Reviewer</th><td>PM 王小明</td></tr>
+      <tr><th>Status</th><td>Done</td></tr>
+      <tr><th>連結</th><td>規格書(依 docs/core/templates/spec-template.md 撰寫)</td></tr>
+    </tbody></table>
+
+    <h3>子工作項:開發</h3>
+    <table><tbody>
+      <tr><th>標題</th><td>[Feature][會員] 新增手機驗證 - 開發</td></tr>
+      <tr><th>Assignee</th><td>開發組長 李組長(分派後端工程師/前端工程師)</td></tr>
+      <tr><th>開始日 / 預計送測日</th><td>2026-08-06 / 2026-08-18</td></tr>
+      <tr><th>Reviewer</th><td>開發組長 李組長</td></tr>
+      <tr><th>Status</th><td>In Review</td></tr>
+      <tr><th>連結</th><td>PR #482、技術文件(API POST /api/v1/phone-verifications)</td></tr>
+      <tr><th>相依關係</th><td>blocked by:規格文件子工作項(Done後才開立)</td></tr>
+    </tbody></table>
+
+    <h3>子工作項:測試</h3>
+    <table><tbody>
+      <tr><th>標題</th><td>[Feature][會員] 新增手機驗證 - 測試</td></tr>
+      <tr><th>Assignee</th><td>測試組長(分派測試人員)</td></tr>
+      <tr><th>Status</th><td>In Progress</td></tr>
+      <tr><th>連結</th><td>測試案例 TC-MEMBER-001~TC-MEMBER-006(見 QA 工作單範例)</td></tr>
+      <tr><th>相依關係</th><td>blocked by:開發子工作項(送測後才開立)</td></tr>
+    </tbody></table>
+
+    <h3>子工作項:驗收 / 上線</h3>
+    <table><thead><tr><th>欄位</th><th>驗收</th><th>上線</th></tr></thead><tbody>
+      <tr><td>標題</td><td>[Feature][會員] 新增手機驗證 - 驗收</td><td>[Feature][會員] 新增手機驗證 - 上線</td></tr>
+      <tr><td>Assignee</td><td>PM + 需求方(客服主管)</td><td>開發 + PM</td></tr>
+      <tr><td>Status</td><td>Todo</td><td>Todo</td></tr>
+      <tr><td>備註</td><td>狀態轉 Done 即代表需求方簽核通過</td><td>交付文件包含規格書、測試報告、驗收紀錄</td></tr>
+    </tbody></table>
+
+    <div class="footer">本文件由 docs/platform/examples/plane-example.md 轉換產生。內容如有更新請以該檔案為準。相關範例見 <a href="../../core/examples/qa-example.html">QA 工作單範例</a>。</div>
+  </main>
+</body>
+</html>
